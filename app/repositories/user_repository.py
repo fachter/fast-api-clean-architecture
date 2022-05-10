@@ -16,6 +16,7 @@ class UserRepository(BaseRepository):
         result = self._db.find_one(self._collection, {'username': username})
         if not result:
             return None
+        print(result)
         user = UserDocument(**result, user_id=str(result['_id']))
         return user
 

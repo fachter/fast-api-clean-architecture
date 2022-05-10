@@ -60,7 +60,7 @@ class BaseRepository(ABC):
         return self._db.find_one(self._collection, {'_id': ObjectId(mongo_id)})
 
     def insert(self, data: BaseModel):
-        self._db.insert(self._collection, data.dict())
+        self._db.insert(self._collection, data.dict(exclude_none=True))
 
     def delete(self, data_id: str):
         self._db.delete(self._collection, data_id)
