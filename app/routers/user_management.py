@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Response
 from usecases.user_use_case import AddUserUseCase
 from viewmodels.user import CreateUserModel
 
-router = APIRouter()
+router = APIRouter(prefix='/users')
 
 
 @router.post('/add')
