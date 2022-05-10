@@ -5,10 +5,10 @@ from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
 from repositories.user_repository import UserRepository
 from jose import jwt, JWTError
+from passlib.context import CryptContext
 
 from viewmodels.token import TokenData, Token
 from viewmodels.user import UserModel
-from config.security import verify_password
 
 
 class GetAuthenticatedUserUseCase:
@@ -45,13 +45,10 @@ class AuthenticateUseCase:
         self._SECRET_KEY = os.getenv('SECRET_KEY')
         self._ACCESS_TOKEN_EXPIRES_MINUTES = 30
         self._user_repo = user_repo
+        self._pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 
     def authenticate(self, username: str, password: str):
-        user = self._user_repo.find_one_by_username(username)
-        if not user:
-            return False
-        if not verify_password(password, user.password):
-            return False
+        user = self._validate_and_get_user(username, password)
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -61,6 +58,17 @@ class AuthenticateUseCase:
         access_token_expires = timedelta(minutes=self._ACCESS_TOKEN_EXPIRES_MINUTES)
         access_token = self._create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
         return Token(access_token=access_token, token_type='bearer')
+
+    def _validate_and_get_user(self, username: str, password: str):
+        user = self._user_repo.find_one_by_username(username)
+        if not user:
+            return False
+        if not self._verify_password(password, user.password):
+            return False
+        return user
+
+    def _verify_password(self, plain_pwd, hashed_pwd):
+        return self._pwd_context.verify(plain_pwd, hashed_pwd)
 
     def _create_access_token(self, data: dict, expires_delta: timedelta | None = None):
         to_encode = data.copy()

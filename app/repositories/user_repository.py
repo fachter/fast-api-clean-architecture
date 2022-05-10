@@ -12,8 +12,10 @@ class UserRepository(BaseRepository):
     def _collection(self):
         return 'user'
 
-    def find_one_by_username(self, username) -> UserDocument:
+    def find_one_by_username(self, username) -> UserDocument | None:
         result = self._db.find_one(self._collection, {'username': username})
+        if not result:
+            return None
         user = UserDocument(**result, user_id=str(result['_id']))
         return user
 

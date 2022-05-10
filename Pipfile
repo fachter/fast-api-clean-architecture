@@ -5,6 +5,8 @@ name = "pypi"
 
 [packages]
 python-dotenv="*"
+python-multipart="*"
+email-validator="*"
 fastapi="*"
 uvicorn="*"
 pymongo="*"
@@ -12,6 +14,7 @@ python-jose="*"
 cryptography="*"
 passlib="*"
 bcrypt="*"
+pydantic="*"
 
 [dev-packages]
 

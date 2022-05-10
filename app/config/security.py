@@ -3,16 +3,16 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from passlib.context import CryptContext
 from usecases.security import GetAuthenticatedUserUseCase, AuthenticateUseCase
 
-pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+# pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
 
-def verify_password(plain_pwd, hashed_pwd):
-    return pwd_context.verify(plain_pwd, hashed_pwd)
-
-
-def get_password_hash(password):
-    return pwd_context.hash(password)
+# def verify_password(plain_pwd, hashed_pwd):
+#     return pwd_context.verify(plain_pwd, hashed_pwd)
+#
+#
+# def get_password_hash(password):
+#     return pwd_context.hash(password)
 
 
 def get_authenticated_user(token: str = Depends(oauth2_scheme),
